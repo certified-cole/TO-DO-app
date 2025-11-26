@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager | Simple & Responsive</title>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="cole.css">
+
+</head>
+<body>
+<div class="container">
+
+<header>
+    <h1><i class="fas fa-tasks"></i> Task Manager</h1>
+    <p>YOUR PERSONAL WORK SPACE</p>
+</header>
+
+<main>
+
+    <!-- FORM FOR ADDING TASKS -->
+    <form id="taskForm">
+        <input type="text" id="taskName" placeholder="Task name...">
+        <input type="date" id="taskDate">
+        <select id="taskCategory">
+            <option value="General">General</option>
+            <option value="Work">Work</option>
+            <option value="School">School</option>
+            <option value="Personal">Personal</option>
+        </select>
+        <button type="submit"><i class="fas fa-plus"></i> Add</button>
+    </form>
+
+    <!-- SEARCH + SORT -->
+    <div class="top-bar">
+        <input type="text" id="searchBar" placeholder="Search task..." style="flex:1;">
+        <select id="sortSelect">
+            <option value="none">Sort</option>
+            <option value="name">Sort by name</option>
+            <option value="date">Sort by date</option>
+        </select>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+        <div class="stats-box total" id="filterAll">Total: <span id="totalCount">0</span></div>
+        <div class="stats-box completed" id="filterCompleted">Completed: <span id="completedCount">0</span></div>
+        <div class="stats-box uncompleted" id="filterUncompleted">Uncompleted: <span id="uncompletedCount">0</span></div>
+    </div>
+
+    <!-- TASK LIST -->
+    <section id="taskList"></section>
+
+</main>
+
+<footer>
+    <p>&copy; 2025 Task Manager</p>
+    <i class="fab fa-facebook"></i> Certifiedcole
+</footer>
+
+<script src="cole.js"></script>
+</body>
+</html>
