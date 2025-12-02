@@ -1,5 +1,3 @@
-/* SIMPLE TASK MANAGER - PLAIN JAVASCRIPT */
-
 // Load saved tasks from localStorage or start empty
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
@@ -14,6 +12,10 @@ const sortSelect = document.getElementById("sortSelect");
 // Filter state: "all", "completed", "uncompleted"
 let currentFilter = "all";
 
+// Track if we're in edit mode
+let isEditing = false;
+let currentEditId = null;
+
 /* ADD TASK */
 form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -27,13 +29,26 @@ form.addEventListener("submit", function(e){
         return;
     }
 
-    tasks.push({
-        id: Date.now(),
-        name,
-        date,
-        category,
-        completed: false
-    });
+    if (isEditing) {
+        // Update existing task
+        tasks = tasks.map(t =>
+            t.id === currentEditId ? {...t, name, date, category} : t
+        );
+        
+        // Reset form to add mode
+        document.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> Add';
+        isEditing = false;
+        currentEditId = null;
+    } else {
+        // Add new task
+        tasks.push({
+            id: Date.now(),
+            name,
+            date,
+            category,
+            completed: false
+        });
+    }
 
     form.reset();
     saveAndRender();
@@ -81,7 +96,10 @@ function renderTasks(){
                 </div>
             </div>
             <div class="task-actions">
-                <button onclick="deleteTask(${task.id})">
+                <button onclick="editTask(${task.id})" title="Edit task">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteTask(${task.id})" title="Delete task">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -100,10 +118,41 @@ function toggleTask(id){
     saveAndRender();
 }
 
+/* EDIT TASK */
+function editTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    
+    // Fill form with task data
+    document.getElementById("taskName").value = task.name;
+    document.getElementById("taskDate").value = task.date;
+    document.getElementById("taskCategory").value = task.category;
+    
+    // Change button to "Update"
+    document.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Update';
+    
+    // Set editing state
+    isEditing = true;
+    currentEditId = id;
+    
+    // Scroll to form
+    document.getElementById("taskForm").scrollIntoView({ behavior: "smooth" });
+}
+
 /* DELETE TASK */
 function deleteTask(id){
-    tasks = tasks.filter(t => t.id !== id);
-    saveAndRender();
+    if (confirm("Are you sure you want to delete this task?")) {
+        tasks = tasks.filter(t => t.id !== id);
+        saveAndRender();
+    }
+}
+
+/* CANCEL EDIT */
+function cancelEdit() {
+    form.reset();
+    document.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> Add';
+    isEditing = false;
+    currentEditId = null;
 }
 
 /* UPDATE STATS */
