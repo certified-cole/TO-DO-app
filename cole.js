@@ -29,18 +29,20 @@ form.addEventListener("submit", function(e){
         return;
     }
 
+    if(date && new Date(date) < new Date().setHours(0,0,0,0)){
+        alert("Cannot add tasks with past dates!");
+        return;
+    }
+
     if (isEditing) {
-        // Update existing task
         tasks = tasks.map(t =>
             t.id === currentEditId ? {...t, name, date, category} : t
         );
         
-        // Reset form to add mode
         document.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> Add';
         isEditing = false;
         currentEditId = null;
     } else {
-        // Add new task
         tasks.push({
             id: Date.now(),
             name,
@@ -58,12 +60,10 @@ form.addEventListener("submit", function(e){
 function renderTasks(){
     taskList.innerHTML = "";
 
-    // Filter by search
     let filtered = tasks.filter(t =>
         t.name.toLowerCase().includes(searchBar.value.toLowerCase())
     );
 
-    // Sorting
     if(sortSelect.value === "name"){
         filtered.sort((a,b) => a.name.localeCompare(b.name));
     }
@@ -71,7 +71,6 @@ function renderTasks(){
         filtered.sort((a,b) => new Date(a.date) - new Date(b.date));
     }
 
-    // Apply filter buttons
     if(currentFilter === "completed"){
         filtered = filtered.filter(t => t.completed);
     }
@@ -79,7 +78,6 @@ function renderTasks(){
         filtered = filtered.filter(t => !t.completed);
     }
 
-    // Display tasks
     filtered.forEach(task => {
         const div = document.createElement("div");
         div.className = "task" + (task.completed ? " completed" : "");
@@ -123,19 +121,15 @@ function editTask(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
     
-    // Fill form with task data
     document.getElementById("taskName").value = task.name;
     document.getElementById("taskDate").value = task.date;
     document.getElementById("taskCategory").value = task.category;
     
-    // Change button to "Update"
     document.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Update';
     
-    // Set editing state
     isEditing = true;
     currentEditId = id;
     
-    // Scroll to form
     document.getElementById("taskForm").scrollIntoView({ behavior: "smooth" });
 }
 
